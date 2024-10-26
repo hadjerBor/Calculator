@@ -1,28 +1,26 @@
-from flask import Flask, jsonify
+from flask import Flask, render_template
+from addition import add
+from subtraction import subtraction_bp
+from multiplication import multiply
+from division import division_bp
 
-app = Flask(name)
+app = Flask(__name__)
 
-@app.route('/add/<int:num1>/<int:num2>', methods=['GET'])
-def add(num1, num2):
-    result = num1 + num2
-    return jsonify({'status': 200, 'result': result})
+# Register blueprints
+app.register_blueprint(subtraction_bp)
+app.register_blueprint(division_bp)
 
-@app.route('/subtract/<int:num1>/<int:num2>', methods=['GET'])
-def subtract(num1, num2):
-    result = num1 - num2
-    return jsonify({'status': 200, 'result': result})
+@app.route('/')
+def calculator():
+    return render_template('index.html')
 
-@app.route('/multiply/<int:num1>/<int:num2>', methods=['GET'])
-def multiply(num1, num2):
-    result = num1 * num2
-    return jsonify({'status': 200, 'result': result})
+@app.route('/add/<int:numberA>/<int:numberB>', methods=['GET'])
+def add_route(numberA, numberB):
+    return add(numberA, numberB)
 
-@app.route('/divide/<int:num1>/<int:num2>', methods=['GET'])
-def divide(num1, num2):
-    if num2 == 0:
-        return jsonify({'status': 400, 'error': 'Division by zero is not allowed'})
-    result = num1 / num2
-    return jsonify({'status': 200, 'result': result})
+@app.route('/multiply/<int:numberA>/<int:numberB>', methods=['GET'])
+def multiply_route(numberA, numberB):
+    return multiply(numberA, numberB)
 
-if name == 'main':
+if __name__ == '__main__':
     app.run(debug=True)
